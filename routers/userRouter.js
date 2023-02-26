@@ -6,8 +6,9 @@ export const userRouter = express.Router();
 userRouter.post("/user", (req, res) => {
     try {
         const user = req.body;
-        let sql = `insert into user (_id, nome, email, pass) values(null, '${user.nome}', '${user.email}', MD5('${user.pass}'))`;
-        conn.query(sql, (err, result) => {
+        let sql = `insert into user (_id, nome, email, pass) values(null, ?, ?, MD5(?))`;
+        let fields = [user.nome, user.email, user.pass];
+        conn.query(sql, fields, (err, result) => {
             if (err) {
                 console.error("Erro > ", err.message);
                 return res.status(500).json({ error: "Erro ao gravar os dados!" });
@@ -40,8 +41,8 @@ userRouter.get("/user", (req, res) => {
 userRouter.get("/user/:id", (req, res) => {
     try {
         let id = req.params.id
-        let sql = `select * from user where _id = ${id} and active=1`;
-        conn.query(sql, (err, result) => {
+        let sql = `select * from user where _id = ? and active=1`;
+        conn.query(sql, id, (err, result) => {
             if (err) {
                 console.error("Erro > ", err.message);
                 return res.status(500).json({ error: "Erro ao ler os dados!" });
@@ -59,12 +60,12 @@ userRouter.put("/user/:id", (req, res) => {
         const user = req.body;
         let id = req.params.id;
         let sql = ` update user set
-                    nome = '${user.nome}',
-                    email = '${user.email}',
-                    pass = MD5('${user.pass}')
-                    where _id = ${id}
+                    nome = ?,
+                    email = ?,
+                    pass = MD5(?)
+                    where _id = ?
                     and active=1`;
-        conn.query(sql, (err, result) => {
+        conn.query(sql, [user.nome, user.email, user.pass, id], (err, result) => {
             if (err) {
                 console.error("Erro > ", err.message);
                 return res.status(500).json({ error: "Erro ao atualizar os dados!" });
@@ -84,9 +85,9 @@ userRouter.put("/user/:id", (req, res) => {
 userRouter.delete("/user/:id", (req, res) => {
     try {
         let id = req.params.id;
-        //let sql = `delete from user where _id = ${id}`;
-        let sql = `update user set active = 0 where _id = ${id} and active=1`;
-        conn.query(sql, (err, result) => {
+        //let sql = `delete from user where _id = ?`;
+        let sql = `update user set active = 0 where _id = ? and active=1`;
+        conn.query(sql, id, (err, result) => {
             if (err) {
                 console.error("Erro > ", err.message);
                 return res.status(500).json({ error: "Erro ao remover os dados!" });

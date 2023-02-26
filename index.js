@@ -1,5 +1,6 @@
 //const express = require("express");
 import express, { json } from "express";
+import { addressRouter } from "./routers/addressRouter.js";
 import { userRouter } from "./routers/userRouter.js";
 import { conn } from "./services/connect.js";
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 // Routers
 app.use(userRouter);
+app.use(addressRouter);
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Bem vindos!", data: req.headers });
 });
