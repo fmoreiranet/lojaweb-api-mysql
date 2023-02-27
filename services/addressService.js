@@ -6,15 +6,15 @@ export const addressService = {
 
         let fieldsAddress = [address.cep, address.logradouro, address.bairro, address.cidade, address.uf];
 
-        conn.beginTransaction(function (err) {
+        conn.beginTransaction((err) => {
             if (err) {
-                return callback(err)
+                return callback(err);
             }
             conn.query(sql, fieldsAddress, (errQuery, result) => {
                 if (errQuery) {
                     return conn.rollback((err) => {
                         // if (err) throw err;
-                        return callback(errQuery)
+                        return callback(errQuery);
                     });
                 }
                 conn.commit((err) => {
@@ -60,32 +60,6 @@ export const addressService = {
                         callback(err, result);
                     })
                 });
-            });
-        });
-    },
-    addUserAddress2: async (address, callback) => {
-        let sql = `insert into address (cep, logradouro, bairro, cidade, uf) values(?,?,?,?,?);`;
-        sql += `insert into user_address(_id_user, _cep, numero, complemento) values(?,?,?,?);`;
-
-        let fieldsAddress = [address.cep, address.logradouro, address.bairro, address.cidade, address.uf, address._id_user, address.cep, address.numero, address.complemento];
-
-        conn.beginTransaction(function (err) {
-            if (err) {
-                return callback(err);
-            }
-            conn.query(sql, fieldsAddress, (errQuery, result) => {
-                if (errQuery) {
-                    return conn.rollback((err) => {
-                        if (err) throw err;
-                        return callback(errQuery);
-                    });
-                }
-                conn.commit((err) => {
-                    if (err) {
-                        return callback(err);
-                    }
-                    callback(err, result);
-                })
             });
         });
     }
